@@ -1,4 +1,4 @@
-// this is sample schema
+-- this is sample schema
 --T?o b?ng:
 create table NHANVIEN(
        maNV char (4) not null,
@@ -11,8 +11,17 @@ create table NHANVIEN(
        luong number,
        primary key (maNV)
 );
+create table PHONGBAN(
+       maPhong char (5) not null,
+       tenPhong varchar2 (50) not null,
+       truongPhong char (4) ,
+       ngayNhanChuc date,
+       soNhanVien number,
+       chiNhanh char (5),
+       primary key (maPhong)
+);
 create table CHINHANH(
-        maCN char (5),
+        maCN char (5) not null,
         tenCN varchar2 (50),
         truongCN char(4),
         primary key  (maCN)
@@ -25,18 +34,10 @@ create table DUAN(
        truongDA char (4),
        primary key (maDA)
 );
-create table PHONGBAN(
-       maPhong char (5) not null,
-       tenPhong varchar2 (50) not null,
-       truongPhong char (4) ,
-       ngayNhanChuc date,
-       soNhanVien number,
-       chiNhanh char (5),
-       primary key (maPhong)
-);
+
 create table PHANCONG(
        maNV char (5) not null,
-       duAn char (5),
+       duAn char (5) not null,
        vaiTro varchar2 (50),
        phuCap float,
        primary key (maNV, duAn)
@@ -50,46 +51,17 @@ create table CHITIEU(
 );
 
 
-alter table DUAN
-    add constraint FK_NHANVIEN_DUAN
-    foreign key  (truongDA)
-    references  NHANVIEN (maNV);
-
 --T?o khoá ngo?i:
-alter table CHINHANH
-    add constraint FK_NHANVIEN_CHINHANH
-    foreign key  (truongCN)
-    references  NHANVIEN (maNV);
-   
-----T?o Khoá ngo?i:
-alter table PHONGBAN
-    add constraint FK_NHANVIEN_PHONGBAN
-    foreign key  (truongPhong)
-    references  NHANVIEN;
-alter table PHONGBAN
-    add constraint FK_NHANVIEN_CHINHANH
-    foreign key  (chiNhanh)
-    references  CHINHANH (maCN);
---T?o b?ng Phân công:
-alter table PHANCONG
-    add constraint FK_PHANCONG_DUAN
-    foreign key  (duAn)
-    references  DUAN (maDA);
-alter table PHANCONG
-    add constraint FK_PHANCONG_NHANVIEN
-    foreign key  (maNV)
-    references  NHANVIEN (maNV);
-
-alter table CHITIEU
-    add constraint FK_CHITIEU_DUAN
-    foreign key  (duAn)
-    references  DUAN (maDA);
- 
- alter table DUAN
-    add constraint FK_DUAN_PHONGBAN
-    foreign key  (phongchuTri)
-    references  PHONGBAN (maPhong);
---Insert into table:
+alter table NHANVIEN add constraint FK_NHANVIEN_CHINHANH foreign key (chiNhanh) references CHINHANH (maCN);
+alter table NHANVIEN add constraint FK_NHANVIEN_PHONGBAN foreign key (maPhong) references PHONGBAN (maPhong);
+alter table CHINHANH add constraint FK_CHINHANH_NHANVIEN foreign key (truongCN) references NHANVIEN (maNV);
+alter table PHONGBAN add constraint FK_PHONGBAN_NHANVIEN foreign key (truongPhong) references NHANVIEN (maNV);
+alter table PHANCONG add constraint FK_PHANCONG_DUAN foreign key (maDA) references DUAN (maDA);
+alter table PHANCONG add constraint FK_PHANCONG_NHANVIEN foreign key (maNV) references NHANVIEN (maNV);
+alter table CHITIEU add constraint FK_CHITIEU_DUAN foreign key (duAn) references DUAN (maDA);
+alter table DUAN add constraint FK_DUAN_PHONGBAN foreign key (phongchuTri) references PHONGBAN (maPhong);
+alter table DUAN add constraint FK_DUAN_NHANVIEN foreign key (truongDA) references NHANVIEN (maNV);
+---Insert into table:
 ------table CHINHANH
  insert into CHINHANH(maCN, tenCN, truongCN) values ('CN001', 'Ho Chi Minh city', 'NV01');
  insert into CHINHANH(maCN, tenCN, truongCN) values ('CN002', 'Ha Noi capital', 'NV03');
@@ -97,13 +69,13 @@ alter table CHITIEU
  insert into CHINHANH(maCN, tenCN, truongCN) values ('CN004', 'Thanh Hoa province', 'NV04');
  insert into CHINHANH(maCN, tenCN, truongCN) values ('CN005', 'Tien Giang provice', 'NV07');
 -----table PHONGBAN
- insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT001', 'KT dien','NV10', 5, 'CN001');
-  insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT002', 'Co khi', 'NV01', 5, 'CN001');
- insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT003', 'KT o to', 'NV06', 3, 'CN002');
- insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT004', 'KT dan dung', 'NV04 ', 2, 'CN004');
- insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT005', 'KT sua xe', 'NV07', 5, 'CN005');
- insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT006', 'KT dien lanh', 'NV05', 3, 'CN003');
- insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT007', 'bao tri-sua chua', 'NV09 ', 2, 'CN004');
+ insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT001', 'KT dien','NV10',null,  5, 'CN001');
+  insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT002', 'Co khi', 'NV01', null, 2, 'CN001');
+ insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT003', 'KT o to', 'NV06', null, 3, 'CN002');
+ insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT004', 'KT dan dung', 'NV04', null, 2, 'CN004');
+ insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT005', 'KT sua xe', 'NV07', null, 6, 'CN005');
+ insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT006', 'KT dien lanh', 'NV05', null, 3, 'CN003');
+ insert into PHONGBAN(maPhong, tenPhong, truongPhong, ngayNhanChuc, soNhanVien, chiNhanh) values ('KT007', 'bao tri-sua chua', 'NV09', null, 2, 'CN004');
 --Insert into table NHANVIEN
 insert into NHANVIEN (maNV, hoTen, diaChi, dienThoai, Email, maPhong, chiNhanh, luong) values ('NV01', 'Nguyen Thanh AN', 'Q1 Ho Chi Minh',null, 'an@gmail.com', 'KT002', 'CN001', 19000000);
 
@@ -147,10 +119,12 @@ insert into PHANCONG (maNV, duAn, vaiTro, phuCap)  values ('NV03', 'DA006', 'Nha
 insert into PHANCONG (maNV, duAn, vaiTro, phuCap)  values ('NV05', 'DA007', 'Nhan Vien', 210000);
 
 --insert into table CHITIEU
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT001', 'Chi tieu can thiet 1', 220000, 'DA01');
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT001', 'Chi tieu can thiet 1', 260000, 'DA02');
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT003', 'Chi tieu can thiet 3', 280000, 'DA03');
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT004', 'Chi tieu can thiet 3', 300000, 'DA04');
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT005', 'Chi tieu can thiet 5', 350000, 'DA05');
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT006', 'Chi tieu can thiet 6', 320000, 'DA06');
-insert into CHITIEU (maChiTieu, tenChTieu, soTien,duAn) values ('CT007', 'Chi tieu can thiet 7', 290000, 'DA07');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT001', 'Chi tieu can thiet 1', 220000, 'DA01');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT001', 'Chi tieu can thiet 1', 260000, 'DA02');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT003', 'Chi tieu can thiet 3', 280000, 'DA03');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT004', 'Chi tieu can thiet 3', 300000, 'DA04');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT005', 'Chi tieu can thiet 5', 350000, 'DA05');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT006', 'Chi tieu can thiet 6', 320000, 'DA06');
+insert into CHITIEU (maChiTieu, tenChiTieu, soTien,duAn) values ('CT007', 'Chi tieu can thiet 7', 290000, 'DA07');
+
+-- Cai dat chinh sach bao mat
