@@ -1,5 +1,12 @@
-// this is sample schema
---T?o b?ng:
+(SYS)
+connect / as sysdba
+create user hr identified by abcd;
+grant create create session to hr;
+grant create to hr;
+(HR)
+connect hr/abcd;
+
+--Tao bang
 create table NHANVIEN(
        maNV char (4) not null,
        hoTen varchar2 (50),
@@ -55,13 +62,12 @@ alter table DUAN
     foreign key  (truongDA)
     references  NHANVIEN (maNV);
 
---T?o khoá ngo?i:
+--Tao khoa ngoai:
 alter table CHINHANH
     add constraint FK_NHANVIEN_CHINHANH
     foreign key  (truongCN)
     references  NHANVIEN (maNV);
-   
-----T?o Khoá ngo?i:
+ --
 alter table PHONGBAN
     add constraint FK_NHANVIEN_PHONGBAN
     foreign key  (truongPhong)
@@ -70,7 +76,8 @@ alter table PHONGBAN
     add constraint FK_NHANVIEN_CHINHANH
     foreign key  (chiNhanh)
     references  CHINHANH (maCN);
---T?o b?ng Phân công:
+
+-- Phân công:
 alter table PHANCONG
     add constraint FK_PHANCONG_DUAN
     foreign key  (duAn)
@@ -89,6 +96,7 @@ alter table CHITIEU
     add constraint FK_DUAN_PHONGBAN
     foreign key  (phongchuTri)
     references  PHONGBAN (maPhong);
+
 --Insert into table:
 ------table CHINHANH
  insert into CHINHANH(maCN, tenCN, truongCN) values ('CN001', 'Ho Chi Minh city', 'NV01');
